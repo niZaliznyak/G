@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+	
+	<!-- Font Awesome CSS -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" integrity="sha256-46qynGAkLSFpVbEBog43gvNhfrOj+BmwXdxFgVK/Kvc=" crossorigin="anonymous">
+	
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="./css/style.css">
+	<link rel="stylesheet" href="./css/custom.css">
+	
+	<title>Hello, DOM!</title>
+	<script>
+     (async function(){
+
+      let url_nbu = "https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json";
+      let dataNBU = await fetch(url_nbu);
+        dataNBU = await dataNBU.json();
+
+      console.log("НБУ: ", dataNBU);
+
+        let url_countries = "https://restcountries.eu/rest/v2/all";
+      let allCountryInfo = await fetch(url_countries);
+        allCountryInfo = await allCountryInfo.json();
+
+      let ccIndex = [];
+
+      for(i = 0; i < dataNBU.length; i++){
+        ccIndex.push(allCountryInfo.filter(item => item.currencies[0].code == dataNBU[i].cc)); //в дальнейшем написать скрипт для стран где более 1 валюты
+      }
+      ccIndex = ccIndex.flat();
+      console.log(ccIndex);
+
+        let html = ccIndex.map(countrie => `
+
+      <li class="list-group-item">
+
+        <div class="row">
+
+          <div class="col-1"> 
+            <img class="img-fluid" src="${countrie.flag}"/>
+          </div>
+
+          <div class="col"> 
+            <h3>${countrie.name}</h3>
+            <h6>${countrie.currencies[0].code} - ${countrie.currencies[0].name}</h6>
+            <h6>Курс: ${dataNBU[dataNBU.indexOf(countrie.currencies[0].code)].rate}</h6>
+          </div>
+
+        </div>
+      </li>
+
+        `);
+
+      html = html.join("");
+
+      let cardsBox = document.querySelector(".list-group");
+
+        cardsBox.insertAdjacentHTML("afterbegin", html);
+
+
+  })();
+  
+  </script>
+
+  </head>
+  <body>
+	
+	<div class="container">
+
+		<ul class="list-group">
+
+			
+
+		</ul>
+
+	</div>
+	
+  </body>
+</html>
